@@ -10,13 +10,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.sql.DataSource;
 
 @Configuration
 @Order(1)
 public class LocalSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncode;
+    private DataSource dataSource;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -36,14 +42,24 @@ public class LocalSecurityConfig extends WebSecurityConfigurerAdapter {
  
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("xeason")
-                    .password(passwordEncode.encode("xmlage"))
-                    .roles("USER")
-            .and()
-                .withUser("admin")
-                    .password(passwordEncode.encode("admin"))
-                    .roles("ADMIN");
+        //-- inmemory authentication --//
+//        auth.inMemoryAuthentication()
+//                .withUser("xeason")
+//                    .password(passwordEncode.encode("xmlage"))
+//                    .roles("USER")
+//            .and()
+//                .withUser("admin")
+//                    .password(passwordEncode.encode("admin"))
+//                    .roles("ADMIN");
+        //-- inmemory authentication end --//
+
+        String userQuery = "SELECT username, password, active AS enabled FROM users as u WHERE u.username = ?";
+        String authorityQuery = "SELECT username, role AS authority FROM authorities as a WHERE a.username = ?";
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .usersByUsernameQuery(userQuery)
+                .authoritiesByUsernameQuery(authorityQuery)
+                .passwordEncoder(passwordEncoder);
     }
 
     @Override
