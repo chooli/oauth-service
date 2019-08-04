@@ -9,25 +9,27 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 
 @Configuration
 @Order(1)
-public class LocalSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public SecurityConfig(DataSource dataSource, PasswordEncoder passwordEncoder) {
+        this.dataSource = dataSource;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/login", "/status").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .exceptionHandling()
@@ -37,22 +39,13 @@ public class LocalSecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/login")
             .and()
-                .formLogin().permitAll();
+                .formLogin().permitAll()
+            .and()
+                .csrf().disable();  // enable this if the authorization service exposure to public
     }
  
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //-- inmemory authentication --//
-//        auth.inMemoryAuthentication()
-//                .withUser("xeason")
-//                    .password(passwordEncode.encode("xmlage"))
-//                    .roles("USER")
-//            .and()
-//                .withUser("admin")
-//                    .password(passwordEncode.encode("admin"))
-//                    .roles("ADMIN");
-        //-- inmemory authentication end --//
-
         String userQuery = "SELECT username, password, active AS enabled FROM users as u WHERE u.username = ?";
         String authorityQuery = "SELECT username, role AS authority FROM authorities as a WHERE a.username = ?";
         auth.jdbcAuthentication()
@@ -64,7 +57,7 @@ public class LocalSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/images/**", "/oauth/uncache_approvals", "/oauth/cache_approvals");
+        web.ignoring().antMatchers("/images/**", "/status");
     }
 
     @Override

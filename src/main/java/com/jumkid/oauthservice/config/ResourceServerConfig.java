@@ -25,10 +25,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 // session creation to be allowed (it's disabled by default in 2.0.6)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             .and()
-                .requestMatchers().antMatchers("/oauth/users/**", "/oauth/clients/**","/me")
+                .requestMatchers().antMatchers("/oauth/users/**", "/oauth/clients/**","/oauth/token")
             .and()
                 .authorizeRequests()
-                    .antMatchers("/me").access("#oauth2.hasScope('read')");
+                    .antMatchers("/oauth/token").access("#oauth2.hasScope('read')");
     }
 
 }

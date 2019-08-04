@@ -1,8 +1,5 @@
 package com.jumkid.oauthservice.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,26 +9,29 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    private TokenStore tokenStore;
+    private final TokenStore tokenStore;
 
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    @Qualifier("authenticationManagerBean")
-    private AuthenticationManager authenticationManager;
+    public AuthorizationServerConfig(AuthenticationManager authenticationManager, BCryptPasswordEncoder passwordEncoder,
+                                     TokenStore tokenStore) {
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenStore = tokenStore;
+    }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-            oauthServer.realm("jumkid2/client").tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
+            oauthServer.tokenKeyAccess("permitAll()")
+                        .checkTokenAccess("permitAll()")
+                        .allowFormAuthenticationForClients();
     }
 
     @Override
@@ -39,12 +39,11 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         clients.inMemory()
           .withClient("jumkid")
           .secret(passwordEncoder.encode("secret"))
-          .authorizedGrantTypes("password", "authorization_code", "refresh_token")
-          .authorizedGrantTypes("authorization_code")
-          .authorities("ROLE_CLIENT")
+          .authorizedGrantTypes("password", "client_credentials", "implicit", "refresh_token")
+          .authorities("CLIENT")
           .scopes("read", "write")
-          .autoApprove(true) 
-          .redirectUris("http://localhost:10090/auth/oauth/token_key/")
+          .autoApprove(true)
+          .redirectUris("/oauth/token")
           .accessTokenValiditySeconds(120)
           .refreshTokenValiditySeconds(240000); 
     }
@@ -52,11 +51,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager);
-    }
-
-    @Bean
-    public TokenStore tokenStore() {
-        return new InMemoryTokenStore();
     }
 
 }
