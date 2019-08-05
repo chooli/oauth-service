@@ -1,6 +1,5 @@
 package com.jumkid.oauthservice.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -29,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/status").permitAll()
+                .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .exceptionHandling()
@@ -57,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/images/**", "/status");
+        web.ignoring().antMatchers("/images/**", "/status", "/index.html");
     }
 
     @Override

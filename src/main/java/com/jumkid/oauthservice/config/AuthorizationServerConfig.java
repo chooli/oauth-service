@@ -10,6 +10,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+import javax.sql.DataSource;
+
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
@@ -20,11 +22,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     private final AuthenticationManager authenticationManager;
 
+    private final DataSource dataSource;
+
     public AuthorizationServerConfig(AuthenticationManager authenticationManager, BCryptPasswordEncoder passwordEncoder,
-                                     TokenStore tokenStore) {
+                                     TokenStore tokenStore, DataSource dataSource) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.tokenStore = tokenStore;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -36,16 +41,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-          .withClient("jumkid")
-          .secret(passwordEncoder.encode("secret"))
-          .authorizedGrantTypes("password", "client_credentials", "implicit", "refresh_token")
-          .authorities("CLIENT")
-          .scopes("read", "write")
-          .autoApprove(true)
-          .redirectUris("/oauth/token")
-          .accessTokenValiditySeconds(120)
-          .refreshTokenValiditySeconds(240000); 
+        clients.jdbc(dataSource);
+
+//        clients.inMemory()
+//          .withClient("jumkid")
+//          .secret(passwordEncoder.encode("secret"))
+//          .authorizedGrantTypes("password", "client_credentials", "implicit", "refresh_token")
+//          .authorities("CLIENT")
+//          .scopes("read", "write")
+//          .autoApprove(true)
+//          .redirectUris("/oauth/token")
+//          .accessTokenValiditySeconds(120)
+//          .refreshTokenValiditySeconds(240000);
+
     }
 
     @Override
