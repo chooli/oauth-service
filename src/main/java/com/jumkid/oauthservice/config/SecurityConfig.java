@@ -38,11 +38,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutUrl("/logout")
                     .logoutSuccessUrl("/login")
             .and()
-                .formLogin().permitAll()
+                .formLogin()
+                .defaultSuccessUrl("/admin.template.html")
+                .permitAll()
             .and()
                 .csrf().disable();  // enable this if the authorization service exposure to public
     }
- 
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         String userQuery = "SELECT username, password, active AS enabled FROM users as u WHERE u.username = ?";

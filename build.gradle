@@ -26,14 +26,20 @@ dependencies {
     implementation 'javax.activation:activation:1.1.1'
 
 	implementation 'mysql:mysql-connector-java:8.0.17'
-	
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-bootRun {
-	main = 'com.jumkid.oauthservice.OauthServiceApplication'
-	
-	systemProperties = System.properties
+bootJar {
+	mainClassName = 'com.jumkid.oauthservice.OauthServiceApplication'
+
+	sourceSets {
+		main {
+			resources {
+				exclude 'static/admin**'
+			}
+		}
+	}
 
     manifest {
         attributes(
@@ -46,3 +52,9 @@ bootRun {
 	}
 
 }
+
+task webpack(type: Exec) {
+	commandLine "$projectDir/node_modules/.bin/webpack"
+}
+
+processResources.dependsOn 'webpack'

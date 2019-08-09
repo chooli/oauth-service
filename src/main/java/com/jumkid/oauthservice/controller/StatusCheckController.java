@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class StatusCheckController {
 
     public enum ServiceStatus {
-        OK("OK");
+        OK("OK"), ERROR("ERROR"), WARNING("WARNING");
 
         private String value;
 
