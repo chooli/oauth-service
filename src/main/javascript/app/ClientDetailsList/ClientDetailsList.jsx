@@ -1,8 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {List, ListItem, ListItemText} from '@material-ui/core';
+import {connect} from 'react-redux';
+import {makeStyles, List, ListItem, ListItemText} from '@material-ui/core';
+import {changeClientId} from "../App.redux-actions";
 
-const ListItems = ({ids}) => {
-    return ids.map(id => <ListItem key={id}>
+const style = makeStyles(theme => ({
+
+   listItem: {
+       cursor: 'pointer'
+   }
+
+}))
+
+const ListItems = ({ids, cid, showClientDetails}) => {
+    return ids.map(id => <ListItem key={id}
+                                   button
+                                   selected={cid === id}
+                                   onClick={() => showClientDetails(id)}
+    >
             <ListItemText
                 primary={id}
             />
@@ -10,8 +24,8 @@ const ListItems = ({ids}) => {
 
 }
 
-const ClientDetailsList = () => {
-    const [cidList, updateCIDList] = useState([]);
+const ClientDetailsList = ({cid, changeClientId}) => {
+    const [cidList, setCIDList] = useState([]);
     const fetchData = () => {
         fetch("http://localhost:10090/clientdetails/allClientIds", {
             method: 'get',
@@ -21,7 +35,7 @@ const ClientDetailsList = () => {
             },
             // body: JSON.stringify({var1: 1, var2: 2})
         }).then( resp => resp.json() )
-            .then(data => updateCIDList(data.clientIds))
+            .then(data => setCIDList(data.clientIds))
             .catch(err => console.log(err));
     }
 
@@ -29,9 +43,29 @@ const ClientDetailsList = () => {
         fetchData();
     }, []);
 
+    const showClientDetails = (cid) => {
+        console.log("edit client details", cid);
+        changeClientId(cid);
+    }
+
     return <List>
-        <ListItems ids={cidList} />
+        <ListItems ids={cidList} cid={cid} showClientDetails={showClientDetails}/>
     </List>
 }
 
-export default ClientDetailsList;
+const mapDispatchToProps = dispatch => {
+    return {
+        changeClientId: cid => dispatch(changeClientId(cid))
+    }
+}
+
+const mapStateToProps = state => {
+    return {
+        cid: state.clientDetails.clientId
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ClientDetailsList);

@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/login")
             .and()
                 .formLogin()
-                .defaultSuccessUrl("/admin.template.html")
+                .defaultSuccessUrl("/admin.html")
                 .permitAll()
             .and()
                 .csrf().disable();  // enable this if the authorization service exposure to public

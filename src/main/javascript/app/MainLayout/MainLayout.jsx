@@ -10,12 +10,11 @@ const useStyles = makeStyles(theme => ({
         padding: '40px'
     },
     item: {
-        flexGrow: 1,
-        margin: 'auto'
+        flexGrow: 1
     },
     paper: {
         padding: theme.spacing(1),
-        textAlign: 'center',
+        top: 0,
         color: theme.palette.text.primary
     }
 }))
@@ -23,16 +22,16 @@ const useStyles = makeStyles(theme => ({
 const MainLayout = () => {
     const classes = useStyles();
 
-    return <Grid container className={classes.root} spacing={1}>
+    return <Grid container justify="center" className={classes.root} spacing={1}>
 
-        <Grid item className={classes.item} xs={9}>
-            <ClientDetailsMaster/>
-        </Grid>
-
-        <Grid item className={classes.item} xs={9}>
+        <Grid item className={classes.item} xs={6}>
             <Paper className={classes.paper}>
                 <ClientDetailsList />
             </Paper>
+        </Grid>
+
+        <Grid item className={classes.item} xs={6}>
+            <ClientDetailsMaster/>
         </Grid>
 
     </Grid>
