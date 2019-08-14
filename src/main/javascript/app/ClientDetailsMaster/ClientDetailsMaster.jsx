@@ -32,8 +32,9 @@ const useStyle = makeStyles( theme => ({
 
 const ClientDetailsMaster = ({cid}) => {
     const classes = useStyle();
-    const [clientDetails, updateClientDetails] = useState(null);
+    const [clientDetails, updateClientDetails] = useState({});
     const [isExisting, setExisting] = useState(false);
+    const [deltaChange, updateDeltaChange] = useState({});
 
     const fetchData = () => {
         if(!_.isNil(cid)) {
@@ -56,12 +57,21 @@ const ClientDetailsMaster = ({cid}) => {
         console.debug("save updated record");
         setExisting(false);
         updateClientDetails(null);
+        updateDeltaChange({});
     }
 
     const doSave = () => {
         if(isExisting) { //update record
-            console.debug("save updated record", clientDetails);
-
+            console.debug("save updated record", deltaChange);
+            fetch("/clientdetails/" + cid, {
+                method: 'put',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(deltaChange)
+            }).then(resp => resp.json())
+                .then(data => console.log(data))
+                .catch(err => console.log(err));
         } else {  //add new record
             console.debug("save new record");
             fetch("/clientdetails", {
@@ -98,6 +108,10 @@ const ClientDetailsMaster = ({cid}) => {
             ...clientDetails,
             [target]: value
         })
+        updateDeltaChange({
+            ...deltaChange,
+            [target]: value
+        })
     }
 
     return (<ExpansionPanel defaultExpanded={true}>
@@ -113,7 +127,7 @@ const ClientDetailsMaster = ({cid}) => {
                 required
                 label="Client ID"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.clientId : ''}
+                value={!_.isNil(clientDetails.clientId) ? clientDetails.clientId : ''}
                 onChange={event => handleChange('clientId', event.currentTarget.value)}
                 margin="normal"
             />
@@ -122,21 +136,21 @@ const ClientDetailsMaster = ({cid}) => {
                 label="Client Secret"
                 type="password"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.clientSecret : ''}
+                value={!_.isNil(clientDetails.clientSecret) ? clientDetails.clientSecret : ''}
                 onChange={event => handleChange('clientSecret', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Resource IDs"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.resourceIds : ''}
+                value={!_.isNil(clientDetails.resourceIds) ? clientDetails.resourceIds : ''}
                 onChange={event => handleChange('resourceIds', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Scope"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.scope : ''}
+                value={!_.isNil(clientDetails.scope) ? clientDetails.scope : ''}
                 onChange={event => handleChange('scope', event.currentTarget.value)}
                 margin="normal"
             />
@@ -144,14 +158,14 @@ const ClientDetailsMaster = ({cid}) => {
                 required
                 label="Authorized Grant Types"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.authorizedGrantTypes : ''}
+                value={!_.isNil(clientDetails.authorizedGrantTypes) ? clientDetails.authorizedGrantTypes : ''}
                 onChange={event => handleChange('authorizedGrantTypes', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Authorities"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.authorities : ''}
+                value={!_.isNil(clientDetails.authorities) ? clientDetails.authorities : ''}
                 onChange={event => handleChange('authorities', event.currentTarget.value)}
                 margin="normal"
             />
@@ -159,7 +173,7 @@ const ClientDetailsMaster = ({cid}) => {
                 label="Access Token Validity"
                 type="number"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.accessTokenValidity : ''}
+                value={!_.isNil(clientDetails.accessTokenValidity) ? clientDetails.accessTokenValidity : ''}
                 onChange={event => handleChange('accessTokenValidity', parseInt(event.currentTarget.value))}
                 margin="normal"
             />
@@ -167,14 +181,14 @@ const ClientDetailsMaster = ({cid}) => {
                 label="Refresh Token Validity"
                 type="number"
                 className={classes.textField}
-                value={!_.isNil(clientDetails) ? clientDetails.refreshTokenValidity : ''}
+                value={!_.isNil(clientDetails.refreshTokenValidity) ? clientDetails.refreshTokenValidity : ''}
                 onChange={event => handleChange('refreshTokenValidity', parseInt(event.currentTarget.value))}
                 margin="normal"
             />
             <FormControlLabel
                 control={
                     <Checkbox
-                        checked={!_.isNil(clientDetails) ? clientDetails.autoapprove : false}
+                        checked={!_.isNil(clientDetails.autoapprove) ? clientDetails.autoapprove : false}
                         onChange={event => handleChange('autoapprove', event.currentTarget.checked)}
                         value="autoapprove"
                     />
@@ -184,14 +198,14 @@ const ClientDetailsMaster = ({cid}) => {
             <TextField
                 label="Web Server Redirect Uri"
                 className={classes.singleTextField}
-                value={!_.isNil(clientDetails) ? clientDetails.webServerRedirectUri : ''}
+                value={!_.isNil(clientDetails.webServerRedirectUri) ? clientDetails.webServerRedirectUri : ''}
                 onChange={event => handleChange('webServerRedirectUri', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Additional Information"
                 className={classes.singleTextField}
-                value={!_.isNil(clientDetails) ? clientDetails.additionalInformation : ''}
+                value={!_.isNil(clientDetails.additionalInformation) ? clientDetails.additionalInformation : ''}
                 onChange={event => handleChange('additionalInformation', event.currentTarget.value)}
                 margin="normal"
             />

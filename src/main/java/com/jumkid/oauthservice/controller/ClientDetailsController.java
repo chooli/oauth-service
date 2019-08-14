@@ -60,14 +60,13 @@ public class ClientDetailsController {
 
     @RequestMapping(value = "/{clientId}", method = RequestMethod.PUT, produces = "application/json")
     @ResponseBody
-    public CommonResponse updateProperty(@PathVariable String clientId,
-                                         @RequestParam String fieldName,
-                                         @RequestParam Object fieldValue) {
-        if(clientId!=null && fieldName!=null && fieldValue!=null){
-            int row = oauthClientDetailsDao.updateField(clientId, ClientDetails.Fields.getColumnName(fieldName), fieldValue);
-            return new CommonResponse((row == 1), null);
-        }
-        return new CommonResponse(false, "Failed to update project value");
+    public CommonResponse updateProperties(@PathVariable String clientId,
+                                           @RequestBody Map<String, Object> properties) {
+        if(clientId == null) return new CommonResponse(false, "client id is empty");
+        if(properties == null || properties.isEmpty()) return new CommonResponse(false, "no property to be updated");
+
+        int row = oauthClientDetailsDao.updateFields(clientId, properties);
+        return new CommonResponse((row == 1), null);
     }
 
     @RequestMapping(value = "/allClientIds", method = RequestMethod.GET, produces = "application/json")

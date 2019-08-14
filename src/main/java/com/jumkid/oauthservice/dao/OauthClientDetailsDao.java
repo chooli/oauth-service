@@ -62,7 +62,7 @@ public class OauthClientDetailsDao {
     }
 
     /**
-     * Update single field of client details record regarding the given client id
+     * Update single field of client details record by the given client id
      *
      * @param clientId
      * @param fieldName
@@ -77,6 +77,39 @@ public class OauthClientDetailsDao {
         int row = jdbcTemplate.update(queryForUpdate, new Object[] {value, clientId});
         logger.debug("updated client details {}", row);
         return row;
+    }
+
+    /**
+     * Update multiple fields of client details record by the given client id
+     *
+     * @param clientId
+     * @param properties
+     * @return
+     */
+    public int updateFields(String clientId, Map<String, Object> properties) {
+        StringBuilder columnsUpdateStr = new StringBuilder();
+        properties.forEach((field, value) -> buildQuery(columnsUpdateStr, field, value));
+        if(columnsUpdateStr.length() > 0) columnsUpdateStr.setLength(columnsUpdateStr.length() - 1);
+
+        String queryForUpdate = "UPDATE oauth_client_details SET " + columnsUpdateStr + " WHERE client_id = ?";
+
+        int row = jdbcTemplate.update(queryForUpdate, new Object[] {clientId});
+        logger.debug("updated client details {}", row);
+        return row;
+    }
+
+    private void buildQuery(StringBuilder columnsUpdateStr, String field, Object value) {
+        columnsUpdateStr.append(ClientDetails.Fields.getColumnName(field));
+        columnsUpdateStr.append(" = ");
+        if(ClientDetails.Fields.CLIENT_SECRET.value().equals(field)){
+            columnsUpdateStr.append("'" + passwordEncoder.encode((String)value) + "'");
+        }else if(value instanceof String){
+            columnsUpdateStr.append("'" + value + "'");
+        }else{
+            columnsUpdateStr.append(value);
+        }
+
+        columnsUpdateStr.append(",");
     }
 
     /**

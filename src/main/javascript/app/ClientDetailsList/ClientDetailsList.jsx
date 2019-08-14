@@ -27,7 +27,7 @@ const ListItems = ({ids, cid, showClientDetails}) => {
 const ClientDetailsList = ({cid, changeClientId}) => {
     const [cidList, setCIDList] = useState([]);
     const fetchData = () => {
-        fetch("http://localhost:10090/clientdetails/allClientIds", {
+        fetch("/clientdetails/allClientIds", {
             method: 'get',
             headers: {
                 'Authorization': 'Basic',
