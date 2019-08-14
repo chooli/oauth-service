@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {makeStyles, List, ListItem, ListItemText} from '@material-ui/core';
 import {changeClientId} from "../App.redux-actions";
+import Refetcher from "../App.refetcher";
 
 const style = makeStyles(theme => ({
 
@@ -42,6 +43,8 @@ const ClientDetailsList = ({cid, changeClientId}) => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    Refetcher.add("ClientDetailsList", fetchData);
 
     const showClientDetails = (cid) => {
         console.log("edit client details", cid);

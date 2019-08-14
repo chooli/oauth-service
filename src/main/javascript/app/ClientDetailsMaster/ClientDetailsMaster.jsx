@@ -6,6 +6,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
+import Refetcher from "../App.refetcher";
 
 const useStyle = makeStyles( theme => ({
     container: {
@@ -81,7 +82,7 @@ const ClientDetailsMaster = ({cid}) => {
                 },
                 body: JSON.stringify(clientDetails)
             }).then(resp => resp.json())
-                .then(data => console.log(data))
+                .then(data => {if(!_.isNil(data.clientId)) Refetcher.runAll();} )
                 .catch(err => console.log(err));
         }
 
@@ -97,6 +98,7 @@ const ClientDetailsMaster = ({cid}) => {
                 if(!_.isNil(data) && data.success) {
                     setExisting(false);
                     updateClientDetails(null);
+                    Refetcher.runAll();
                 }
             })
             .catch(err => console.error(err));
@@ -127,7 +129,7 @@ const ClientDetailsMaster = ({cid}) => {
                 required
                 label="Client ID"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.clientId) ? clientDetails.clientId : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.clientId) ? clientDetails.clientId : ''}
                 onChange={event => handleChange('clientId', event.currentTarget.value)}
                 margin="normal"
             />
@@ -136,21 +138,21 @@ const ClientDetailsMaster = ({cid}) => {
                 label="Client Secret"
                 type="password"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.clientSecret) ? clientDetails.clientSecret : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.clientSecret) ? clientDetails.clientSecret : ''}
                 onChange={event => handleChange('clientSecret', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Resource IDs"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.resourceIds) ? clientDetails.resourceIds : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.resourceIds) ? clientDetails.resourceIds : ''}
                 onChange={event => handleChange('resourceIds', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Scope"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.scope) ? clientDetails.scope : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.scope) ? clientDetails.scope : ''}
                 onChange={event => handleChange('scope', event.currentTarget.value)}
                 margin="normal"
             />
@@ -158,14 +160,14 @@ const ClientDetailsMaster = ({cid}) => {
                 required
                 label="Authorized Grant Types"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.authorizedGrantTypes) ? clientDetails.authorizedGrantTypes : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.authorizedGrantTypes) ? clientDetails.authorizedGrantTypes : ''}
                 onChange={event => handleChange('authorizedGrantTypes', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Authorities"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.authorities) ? clientDetails.authorities : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.authorities) ? clientDetails.authorities : ''}
                 onChange={event => handleChange('authorities', event.currentTarget.value)}
                 margin="normal"
             />
@@ -173,7 +175,7 @@ const ClientDetailsMaster = ({cid}) => {
                 label="Access Token Validity"
                 type="number"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.accessTokenValidity) ? clientDetails.accessTokenValidity : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.accessTokenValidity) ? clientDetails.accessTokenValidity : ''}
                 onChange={event => handleChange('accessTokenValidity', parseInt(event.currentTarget.value))}
                 margin="normal"
             />
@@ -181,14 +183,14 @@ const ClientDetailsMaster = ({cid}) => {
                 label="Refresh Token Validity"
                 type="number"
                 className={classes.textField}
-                value={!_.isNil(clientDetails.refreshTokenValidity) ? clientDetails.refreshTokenValidity : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.refreshTokenValidity) ? clientDetails.refreshTokenValidity : ''}
                 onChange={event => handleChange('refreshTokenValidity', parseInt(event.currentTarget.value))}
                 margin="normal"
             />
             <FormControlLabel
                 control={
                     <Checkbox
-                        checked={!_.isNil(clientDetails.autoapprove) ? clientDetails.autoapprove : false}
+                        checked={!_.isNil(clientDetails) && !_.isNil(clientDetails.autoapprove) ? clientDetails.autoapprove : false}
                         onChange={event => handleChange('autoapprove', event.currentTarget.checked)}
                         value="autoapprove"
                     />
@@ -198,14 +200,14 @@ const ClientDetailsMaster = ({cid}) => {
             <TextField
                 label="Web Server Redirect Uri"
                 className={classes.singleTextField}
-                value={!_.isNil(clientDetails.webServerRedirectUri) ? clientDetails.webServerRedirectUri : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.webServerRedirectUri) ? clientDetails.webServerRedirectUri : ''}
                 onChange={event => handleChange('webServerRedirectUri', event.currentTarget.value)}
                 margin="normal"
             />
             <TextField
                 label="Additional Information"
                 className={classes.singleTextField}
-                value={!_.isNil(clientDetails.additionalInformation) ? clientDetails.additionalInformation : ''}
+                value={!_.isNil(clientDetails) && !_.isNil(clientDetails.additionalInformation) ? clientDetails.additionalInformation : ''}
                 onChange={event => handleChange('additionalInformation', event.currentTarget.value)}
                 margin="normal"
             />
