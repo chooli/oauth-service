@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
-public class OauthClientDetailsDao {
+public class ClientDetailsDao {
 
-    static Logger logger = LoggerFactory.getLogger(OauthClientDetailsDao.class);
+    static Logger logger = LoggerFactory.getLogger(ClientDetailsDao.class);
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -26,8 +26,8 @@ public class OauthClientDetailsDao {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public OauthClientDetailsDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                                 PasswordEncoder passwordEncoder) {
+    public ClientDetailsDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                            PasswordEncoder passwordEncoder) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.passwordEncoder = passwordEncoder;
@@ -89,6 +89,7 @@ public class OauthClientDetailsDao {
     public int updateFields(String clientId, Map<String, Object> properties) {
         StringBuilder columnsUpdateStr = new StringBuilder();
         properties.forEach((field, value) -> buildQuery(columnsUpdateStr, field, value));
+        //remove the last comma
         if(columnsUpdateStr.length() > 0) columnsUpdateStr.setLength(columnsUpdateStr.length() - 1);
 
         String queryForUpdate = "UPDATE oauth_client_details SET " + columnsUpdateStr + " WHERE client_id = ?";

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {makeStyles, List, ListItem, ListItemText} from '@material-ui/core';
-import {changeClientId} from "../App.redux-actions";
-import Refetcher from "../App.refetcher";
+import {changeUsername} from "../../App.redux-actions";
+import Refetcher from "../../App.refetcher";
 
 const style = makeStyles(theme => ({
 
@@ -12,11 +12,11 @@ const style = makeStyles(theme => ({
 
 }))
 
-const ListItems = ({ids, cid, showClientDetails}) => {
+const ListItems = ({ids, cid, showUser}) => {
     return ids.map(id => <ListItem key={id}
                                    button
                                    selected={cid === id}
-                                   onClick={() => showClientDetails(id)}
+                                   onClick={() => showUser(id)}
     >
             <ListItemText
                 primary={id}
@@ -25,10 +25,10 @@ const ListItems = ({ids, cid, showClientDetails}) => {
 
 }
 
-const ClientDetailsList = ({cid, changeClientId}) => {
-    const [cidList, setCIDList] = useState([]);
+const UserList = ({username, changeUsername}) => {
+    const [usernameList, setUsernameList] = useState([]);
     const fetchData = () => {
-        fetch("/clientdetails/allClientIds", {
+        fetch("/user/allUsernames", {
             method: 'get',
             headers: {
                 'Authorization': 'Basic',
@@ -36,7 +36,7 @@ const ClientDetailsList = ({cid, changeClientId}) => {
             },
             // body: JSON.stringify({var1: 1, var2: 2})
         }).then( resp => resp.json() )
-            .then(data => setCIDList(data.clientIds))
+            .then(data => setUsernameList(data.usernames))
             .catch(err => console.log(err));
     }
 
@@ -44,31 +44,31 @@ const ClientDetailsList = ({cid, changeClientId}) => {
         fetchData();
     }, []);
 
-    Refetcher.add("ClientDetailsList", fetchData);
+    Refetcher.add("UserList", fetchData);
 
-    const showClientDetails = (cid) => {
-        console.log("edit client details", cid);
-        changeClientId(cid);
+    const showUser = (username) => {
+        console.log("edit user", username);
+        changeUsername(username);
     }
 
     return <List>
-        <ListItems ids={cidList} cid={cid} showClientDetails={showClientDetails}/>
+        <ListItems ids={usernameList} username={username} showUser={showUser}/>
     </List>
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        changeClientId: cid => dispatch(changeClientId(cid))
+        changeUsername: username => dispatch(changeUsername(username))
     }
 }
 
 const mapStateToProps = state => {
     return {
-        cid: state.clientDetails.clientId
+        username: state.user.username
     }
 }
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ClientDetailsList);
+)(UserList);

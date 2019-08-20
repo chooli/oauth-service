@@ -6,7 +6,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import {connect} from "react-redux";
 import Button from "@material-ui/core/Button";
-import Refetcher from "../App.refetcher";
+import Refetcher from "../../App.refetcher";
 
 const useStyle = makeStyles( theme => ({
     container: {

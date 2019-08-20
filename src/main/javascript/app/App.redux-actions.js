@@ -1,5 +1,5 @@
 const actionTypes = {
-    SHOW_CLIENT_DETAILS: 'SHOW_CLIENT_DETAILS',
+    CHANGE_USERNAME: 'CHANGE_USERNAME',
     CHANGE_CLIENT_ID: 'CHANGE_CLIENT_ID'
 }
 
@@ -8,7 +8,13 @@ const changeClientId = (cid) => ({
     clientId: cid
 })
 
+const changeUsername = (username) => ({
+    type: actionTypes.CHANGE_USERNAME,
+    username: username
+})
+
 export {
     actionTypes,
-    changeClientId
+    changeClientId,
+    changeUsername
 }

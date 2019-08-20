@@ -1,8 +1,9 @@
-import {clientDetailsReducer} from "./App.redux-reducer";
+import {clientDetailsReducer, userReducer} from "./App.redux-reducer";
 import {combineReducers, createStore} from "redux";
 
 const rootReducer = combineReducers({
-    clientDetails: clientDetailsReducer
+    clientDetails: clientDetailsReducer,
+    user: userReducer
 })
 
 const store = createStore(

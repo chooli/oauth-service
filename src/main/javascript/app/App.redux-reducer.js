@@ -7,8 +7,6 @@ const clientDetailsReducer = ( state = {}, action )=> {
     }
 
     switch (action.type) {
-        case actionTypes.SHOW_CLIENT_DETAILS:
-            return action.clientDetails;
         case actionTypes.CHANGE_CLIENT_ID:
             return {
                 ...state,
@@ -18,6 +16,23 @@ const clientDetailsReducer = ( state = {}, action )=> {
     }
 }
 
+const userReducer = ( state = {}, action )=> {
+
+    const newState = {
+        ...state
+    }
+
+    switch (action.type) {
+        case actionTypes.CHANGE_USERNAME:
+            return {
+                ...state,
+                username: action.username
+            };
+        default: return newState;
+    }
+}
+
 export {
-    clientDetailsReducer
+    clientDetailsReducer,
+    userReducer
 }

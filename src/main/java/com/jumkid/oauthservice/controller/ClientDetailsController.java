@@ -1,7 +1,7 @@
 package com.jumkid.oauthservice.controller;
 
 import com.jumkid.oauthservice.controller.response.CommonResponse;
-import com.jumkid.oauthservice.dao.OauthClientDetailsDao;
+import com.jumkid.oauthservice.dao.ClientDetailsDao;
 import com.jumkid.oauthservice.model.ClientDetails;
 import com.jumkid.oauthservice.model.ClientDetailsIds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,14 @@ import java.util.Map;
 @RequestMapping("/clientdetails")
 public class ClientDetailsController {
 
-    private final OauthClientDetailsDao oauthClientDetailsDao;
+    private final ClientDetailsDao clientDetailsDao;
+
+    private final ControllerHelper controllerHelper;
 
     @Autowired
-    public ClientDetailsController(OauthClientDetailsDao oauthClientDetailsDao) {
-        this.oauthClientDetailsDao = oauthClientDetailsDao;
+    public ClientDetailsController(ClientDetailsDao clientDetailsDao, ControllerHelper controllerHelper) {
+        this.clientDetailsDao = clientDetailsDao;
+        this.controllerHelper = controllerHelper;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
@@ -32,30 +35,21 @@ public class ClientDetailsController {
                 .authorizedGrantTypes((String)payload.get(ClientDetails.Fields.AUTHORIZED_GRANT_TYPES.value()))
                 .webServerRedirectUri((String)payload.get(ClientDetails.Fields.WEB_SERVER_REDIRECT_URI.value()))
                 .authorities((String)payload.get(ClientDetails.Fields.AUTHORITIES.value()))
-                .accessTokenValidity(getPayloadValue(payload, ClientDetails.Fields.ACCESS_TOKEN_VALIDITY.value(), Integer.class))
-                .refreshTokenValidity(getPayloadValue(payload, ClientDetails.Fields.REFRESH_TOKEN_VALIDITY.value(), Integer.class))
+                .accessTokenValidity(controllerHelper.getPayloadValue(payload, ClientDetails.Fields.ACCESS_TOKEN_VALIDITY.value(), Integer.class))
+                .refreshTokenValidity(controllerHelper.getPayloadValue(payload, ClientDetails.Fields.REFRESH_TOKEN_VALIDITY.value(), Integer.class))
                 .additionalInformation((String)payload.get(ClientDetails.Fields.ADDITIONAL_INFORMATION.value()))
-                .autoapprove(getPayloadValue(payload, ClientDetails.Fields.AUTO_APPROVE.value(), Boolean.class))
+                .autoapprove(controllerHelper.getPayloadValue(payload, ClientDetails.Fields.AUTO_APPROVE.value(), Boolean.class))
                 .build();
 
-        oauthClientDetailsDao.add(newEntity);
+        clientDetailsDao.add(newEntity);
 
         return newEntity;
-    }
-
-    private <T> T getPayloadValue(Map<String, Object> payload, String fieldName, Class<T> clazz) {
-        if(payload.containsKey(fieldName) && payload.get(fieldName)!=null){
-            return (T)payload.get(fieldName);
-        }else if(clazz == Boolean.class){
-            return (T)Boolean.FALSE;
-        }
-        return null;
     }
 
     @RequestMapping(value = "/{clientId}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ClientDetails get(@PathVariable String clientId) {
-        return oauthClientDetailsDao.get(clientId);
+        return clientDetailsDao.get(clientId);
     }
 
     @RequestMapping(value = "/{clientId}", method = RequestMethod.PUT, produces = "application/json")
@@ -65,21 +59,21 @@ public class ClientDetailsController {
         if(clientId == null) return new CommonResponse(false, "client id is empty");
         if(properties == null || properties.isEmpty()) return new CommonResponse(false, "no property to be updated");
 
-        int row = oauthClientDetailsDao.updateFields(clientId, properties);
+        int row = clientDetailsDao.updateFields(clientId, properties);
         return new CommonResponse((row == 1), null);
     }
 
     @RequestMapping(value = "/allClientIds", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ClientDetailsIds getAllClientIds() {
-        return new ClientDetailsIds(oauthClientDetailsDao.getAllClientIds());
+        return new ClientDetailsIds(clientDetailsDao.getAllClientIds());
     }
 
     @RequestMapping(value = "/{clientId}", method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
     public CommonResponse delete(@PathVariable String clientId) {
         if(clientId != null) {
-            int row = oauthClientDetailsDao.remove(clientId);
+            int row = clientDetailsDao.remove(clientId);
             return new CommonResponse((row == 1), null);
         }
         return new CommonResponse(false, "Failed to delete client details, client id is invalid");
