@@ -36,7 +36,7 @@ const ClientDetailsList = ({cid, changeClientId}) => {
             },
             // body: JSON.stringify({var1: 1, var2: 2})
         }).then( resp => resp.json() )
-            .then(data => setCIDList(data.clientIds))
+            .then(resp => {if(resp.success) setCIDList(resp.data.clientIds);})
             .catch(err => console.log(err));
     }
 

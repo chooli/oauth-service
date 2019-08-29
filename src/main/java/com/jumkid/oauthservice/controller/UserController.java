@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import static com.jumkid.oauthservice.controller.response.CommonResponse.ErrorCodes.*;
+
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -58,11 +60,15 @@ public class UserController {
     @ResponseBody
     public CommonResponse updateProperties(@PathVariable String username,
                                            @RequestBody Map<String, Object> properties) {
-        if(username == null) return new CommonResponse(false, "username is empty");
-        if(properties == null || properties.isEmpty()) return new CommonResponse(false, "no property to be updated");
+        //validation
+        if(username == null) return new CommonResponse(ERROR_VALIDATION.code(), "username is empty");
+        if(properties == null || properties.isEmpty()) return new CommonResponse(ERROR_VALIDATION.code(),
+                "no property to be updated");
 
-        int row = userDao.updateFields(username, properties);
-        return new CommonResponse((row == 1), null);
+        if(userDao.updateFields(username, properties) == 1){
+            return new CommonResponse("properties are updated");
+        }
+        return new CommonResponse(ERROR_DB.code(), "failed to update properties");
     }
 
     @RequestMapping(value = "/allUsernames", method = RequestMethod.GET, produces = "application/json")
@@ -75,14 +81,20 @@ public class UserController {
     @ResponseBody
     @Transactional
     public CommonResponse delete(@PathVariable String username) {
-        if(username != null) {
-            int row = userDao.remove(username);
-            logger.info("remove user {}", row);
-            int row1 = authorityDao.removeRolesForUser(username);
-            logger.info("remove user roles {}", row1);
-            return new CommonResponse((row == 1), null);
+        //validation
+        if(username == null || username.isEmpty()) {
+            return new CommonResponse(ERROR_VALIDATION.code(), "username is invalid");
         }
-        return new CommonResponse(false, "Failed to delete user, username is invalid");
+
+        int row = userDao.remove(username);
+        logger.info("remove user {}", row);
+        int row1 = authorityDao.removeRolesForUser(username);
+        logger.info("remove user roles {}", row1);
+
+        if(row == 1 && row1 == 1) {
+            return new CommonResponse("user is deleted");
+        }
+        return new CommonResponse(ERROR_DB.code(), "failed to delete user");
     }
 
 }

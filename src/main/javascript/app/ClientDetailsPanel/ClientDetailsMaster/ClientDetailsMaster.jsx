@@ -41,10 +41,11 @@ const ClientDetailsMaster = ({cid}) => {
         if(!_.isNil(cid)) {
             fetch("/clientdetails/" + cid)
                 .then( resp => resp.json() )
-                .then(data => {
-                    if(!_.isNil(data) && !_.isNil(data.clientId))
-                    updateClientDetails(data);
-                    setExisting(true);
+                .then(resp => {
+                    if(resp.success){
+                        updateClientDetails(resp.data);
+                        setExisting(true);
+                    }
                 })
                 .catch(err => console.error(err));
         }
@@ -71,7 +72,7 @@ const ClientDetailsMaster = ({cid}) => {
                 },
                 body: JSON.stringify(deltaChange)
             }).then(resp => resp.json())
-                .then(data => console.log(data))
+                .then(resp => console.log(resp.msg))
                 .catch(err => console.log(err));
         } else {  //add new record
             console.debug("save new record");
@@ -82,7 +83,7 @@ const ClientDetailsMaster = ({cid}) => {
                 },
                 body: JSON.stringify(clientDetails)
             }).then(resp => resp.json())
-                .then(data => {if(!_.isNil(data.clientId)) Refetcher.runAll();} )
+                .then(resp => { if(resp.success) Refetcher.runAll(); } )
                 .catch(err => console.log(err));
         }
 
@@ -94,8 +95,8 @@ const ClientDetailsMaster = ({cid}) => {
             method: 'delete'
         })
             .then( resp => resp.json() )
-            .then(data => {
-                if(!_.isNil(data) && data.success) {
+            .then(resp => {
+                if(resp.success) {
                     setExisting(false);
                     updateClientDetails(null);
                     Refetcher.runAll();

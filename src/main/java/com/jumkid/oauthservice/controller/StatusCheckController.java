@@ -1,5 +1,6 @@
 package com.jumkid.oauthservice.controller;
 
+import com.jumkid.oauthservice.controller.response.CommonResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,8 +21,8 @@ public class StatusCheckController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/status", produces = "application/json")
     @ResponseBody
-    public String status() {
-        return ServiceStatus.OK.value();
+    public CommonResponse<String> status() {
+        return new CommonResponse<>(ServiceStatus.OK.value());
     }
 
 }

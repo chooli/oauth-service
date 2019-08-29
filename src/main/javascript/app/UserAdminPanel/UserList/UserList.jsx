@@ -12,8 +12,8 @@ const style = makeStyles(theme => ({
 
 }))
 
-const ListItems = ({ids, cid, showUser}) => {
-    return ids.map(id => <ListItem key={id}
+const ListItems = ({usernames, cid, showUser}) => {
+    return usernames.map(id => <ListItem key={id}
                                    button
                                    selected={cid === id}
                                    onClick={() => showUser(id)}
@@ -36,7 +36,7 @@ const UserList = ({username, changeUsername}) => {
             },
             // body: JSON.stringify({var1: 1, var2: 2})
         }).then( resp => resp.json() )
-            .then(data => setUsernameList(data.usernames))
+            .then(resp => { if(resp.success) setUsernameList(resp.data.usernames); })
             .catch(err => console.log(err));
     }
 
@@ -52,7 +52,7 @@ const UserList = ({username, changeUsername}) => {
     }
 
     return <List>
-        <ListItems ids={usernameList} username={username} showUser={showUser}/>
+        <ListItems usernames={usernameList} username={username} showUser={showUser}/>
     </List>
 }
 

@@ -1,13 +1,36 @@
 package com.jumkid.oauthservice.controller.response;
 
-public class CommonResponse {
+public class CommonResponse<T> {
 
-    private boolean success;
-    private String error;
+    public enum ErrorCodes {
+        ERROR_DB("error_db"), ERROR_VALIDATION("error_validation");
 
-    public CommonResponse(boolean success, String error) {
-        this.success = success;
-        this.error = error;
+        private String code;
+
+        private ErrorCodes(String code){ this.code = code; }
+
+        public String code(){ return code; }
+    }
+
+    //indicate response successful or failed
+    private boolean success = true;
+    //error code for error reference
+    private String errorCode = "";
+    //some information for success or error
+    private String msg;
+    //the data json object
+    private T data;
+
+    public CommonResponse(T data){
+        this.data = data;
+    }
+
+    public CommonResponse(String msg) { this.msg = msg; }
+
+    public CommonResponse(String errorCode, String msg) {
+        this.success = false;
+        this.errorCode = errorCode;
+        this.msg = msg;
     }
 
     public boolean isSuccess() {
@@ -19,11 +42,27 @@ public class CommonResponse {
     }
 
 
-    public String getError() {
-        return error;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }

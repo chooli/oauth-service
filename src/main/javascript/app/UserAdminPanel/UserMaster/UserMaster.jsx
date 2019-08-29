@@ -41,10 +41,11 @@ const UserMaster = ({username}) => {
         if(!_.isNil(username)) {
             fetch("/user/" + username)
                 .then( resp => resp.json() )
-                .then(data => {
-                    if(!_.isNil(data) && !_.isNil(data.username))
-                        updateUser(data);
-                    setExisting(true);
+                .then(resp => {
+                    if(resp.success){
+                        updateUser(resp.data);
+                        setExisting(true);
+                    }
                 })
                 .catch(err => console.error(err));
         }
@@ -71,7 +72,7 @@ const UserMaster = ({username}) => {
                 },
                 body: JSON.stringify(deltaChange)
             }).then(resp => resp.json())
-                .then(data => console.log(data))
+                .then(resp => console.log(resp.msg))
                 .catch(err => console.log(err));
         } else {  //add new record
             console.debug("save new record");
@@ -82,7 +83,7 @@ const UserMaster = ({username}) => {
                 },
                 body: JSON.stringify(user)
             }).then(resp => resp.json())
-                .then(data => {if(!_.isNil(data.username)) Refetcher.runAll();} )
+                .then(resp => { if(resp.success) Refetcher.runAll(); } )
                 .catch(err => console.log(err));
         }
 
@@ -94,8 +95,8 @@ const UserMaster = ({username}) => {
             method: 'delete'
         })
             .then( resp => resp.json() )
-            .then(data => {
-                if(!_.isNil(data) && data.success) {
+            .then(resp => {
+                if(resp.success) {
                     setExisting(false);
                     updateUser(null);
                     Refetcher.runAll();

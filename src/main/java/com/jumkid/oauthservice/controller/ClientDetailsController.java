@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import static com.jumkid.oauthservice.controller.response.CommonResponse.ErrorCodes.*;
+
 @Controller
 @RequestMapping("/clientdetails")
 public class ClientDetailsController {
@@ -56,11 +58,15 @@ public class ClientDetailsController {
     @ResponseBody
     public CommonResponse updateProperties(@PathVariable String clientId,
                                            @RequestBody Map<String, Object> properties) {
-        if(clientId == null) return new CommonResponse(false, "client id is empty");
-        if(properties == null || properties.isEmpty()) return new CommonResponse(false, "no property to be updated");
+        //validate client id
+        if(clientId == null) return new CommonResponse(ERROR_VALIDATION.code(), "client id is empty");
+        //validate properties
+        if(properties == null || properties.isEmpty()) return new CommonResponse(ERROR_VALIDATION.code(), "no property to be updated");
 
-        int row = clientDetailsDao.updateFields(clientId, properties);
-        return new CommonResponse((row == 1), null);
+        if(clientDetailsDao.updateFields(clientId, properties) == 1) {
+            return new CommonResponse("properties are updated");
+        }
+        return new CommonResponse(ERROR_DB.code(), "failed to update properties");
     }
 
     @RequestMapping(value = "/allClientIds", method = RequestMethod.GET, produces = "application/json")
@@ -72,11 +78,13 @@ public class ClientDetailsController {
     @RequestMapping(value = "/{clientId}", method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
     public CommonResponse delete(@PathVariable String clientId) {
-        if(clientId != null) {
-            int row = clientDetailsDao.remove(clientId);
-            return new CommonResponse((row == 1), null);
+        //validate client id
+        if(clientId == null) return new CommonResponse(ERROR_VALIDATION.code(), "client id is empty");
+
+        if(clientDetailsDao.remove(clientId) == 1) {
+            return new CommonResponse("client details is deleted");
         }
-        return new CommonResponse(false, "Failed to delete client details, client id is invalid");
+        return new CommonResponse(ERROR_DB.code(), "failed to delete client details");
     }
 
 }

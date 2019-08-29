@@ -47,10 +47,11 @@ public class AuthorityController {
     @ResponseBody
     public CommonResponse delete(@PathVariable String username, @PathVariable String role) {
         if(username != null) {
-            int row = authorityDao.removeRole(username, role);
-            return new CommonResponse((row == 1), null);
+            if(authorityDao.removeRole(username, role) == 1) {
+                return new CommonResponse("user role is deleted");
+            }
         }
-        return new CommonResponse(false, "Failed to delete user role, username is invalid");
+        return new CommonResponse(CommonResponse.ErrorCodes.ERROR_DB.code(), "Failed to delete user role, username is invalid");
     }
 
 }

@@ -1,7 +1,9 @@
 /build
+/out
 /bin
 /.gradle
 /.idea
 .classpath
 .project
 /node_modules
+/logs
