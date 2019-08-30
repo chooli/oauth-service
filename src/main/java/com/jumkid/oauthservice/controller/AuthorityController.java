@@ -27,7 +27,7 @@ public class AuthorityController {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Authority Add(@RequestBody Map<String, Object> payload){
-        Authority newEntity = new Authority.Builder()
+        Authority newEntity = Authority.newBuilder()
                 .username((String)payload.get(Authority.Fields.USERNAME.value()))
                 .role((String)payload.get(Authority.Fields.ROLE.value()))
                 .build();

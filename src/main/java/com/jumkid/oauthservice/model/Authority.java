@@ -51,6 +51,8 @@ public class Authority {
         return role;
     }
 
+    public static Builder newBuilder(){ return new Builder(); }
+
     public static class Builder {
         private String username;
         private String role;
