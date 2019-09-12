@@ -11,6 +11,8 @@ public class OauthServiceApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		System.out.println("test oauth service");
+
 	}
 
 }
