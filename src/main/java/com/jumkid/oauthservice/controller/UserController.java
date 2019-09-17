@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 import static com.jumkid.oauthservice.controller.response.CommonResponse.ErrorCodes.*;
@@ -58,13 +60,8 @@ public class UserController {
 
     @RequestMapping(value = "/{username}", method = RequestMethod.PUT, produces = "application/json")
     @ResponseBody
-    public CommonResponse updateProperties(@PathVariable String username,
-                                           @RequestBody Map<String, Object> properties) {
-        //validation
-        if(username == null) return new CommonResponse(ERROR_VALIDATION.code(), "username is empty");
-        if(properties == null || properties.isEmpty()) return new CommonResponse(ERROR_VALIDATION.code(),
-                "no property to be updated");
-
+    public CommonResponse updateProperties(@NotBlank @PathVariable String username,
+                                           @NotNull @RequestBody Map<String, Object> properties) {
         if(userDao.updateFields(username, properties) == 1){
             return new CommonResponse("properties are updated");
         }
@@ -80,11 +77,7 @@ public class UserController {
     @RequestMapping(value = "/{username}", method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
     @Transactional
-    public CommonResponse delete(@PathVariable String username) {
-        //validation
-        if(username == null || username.isEmpty()) {
-            return new CommonResponse(ERROR_VALIDATION.code(), "username is invalid");
-        }
+    public CommonResponse delete(@NotBlank @PathVariable String username) {
 
         int row = userDao.remove(username);
         logger.info("remove user {}", row);
