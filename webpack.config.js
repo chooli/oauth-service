@@ -9,7 +9,7 @@ module.exports = {
     },
 
     output: {
-        path: __dirname + '/build/resources/main/static',
+        path: __dirname + '/target/classes/static',
         filename: "[name].bundle.js"
     },
 
@@ -61,4 +61,4 @@ module.exports = {
 
    devtool: 'inline-source-map'
 
-}
+};
