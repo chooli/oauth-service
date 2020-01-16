@@ -5,6 +5,7 @@
 /.idea
 .classpath
 .project
+/node
 /node_modules
 /logs
 /target
