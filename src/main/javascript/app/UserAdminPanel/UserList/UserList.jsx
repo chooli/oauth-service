@@ -10,10 +10,10 @@ const style = makeStyles(theme => ({
        cursor: 'pointer'
    }
 
-}))
+}));
 
 const ListItems = ({usernames, cid, showUser}) => {
-    return usernames.map(id => <ListItem key={id}
+    return usernames != null ? usernames.map(id => <ListItem key={id}
                                    button
                                    selected={cid === id}
                                    onClick={() => showUser(id)}
@@ -21,14 +21,14 @@ const ListItems = ({usernames, cid, showUser}) => {
             <ListItemText
                 primary={id}
             />
-        </ListItem>)
+        </ListItem>) : <ListItem><ListItemText primary={"NO DATA"}/></ListItem>
 
-}
+};
 
 const UserList = ({username, changeUsername}) => {
     const [usernameList, setUsernameList] = useState([]);
     const fetchData = () => {
-        fetch("/user/allUsernames", {
+        fetch("/users/field/username", {
             method: 'get',
             headers: {
                 'Authorization': 'Basic',
@@ -36,9 +36,9 @@ const UserList = ({username, changeUsername}) => {
             },
             // body: JSON.stringify({var1: 1, var2: 2})
         }).then( resp => resp.json() )
-            .then(resp => { if(resp.success) setUsernameList(resp.data.usernames); })
+            .then(resp => { if(resp.success) setUsernameList(resp.data); })
             .catch(err => console.log(err));
-    }
+    };
 
     useEffect(() => {
         fetchData();
@@ -49,24 +49,24 @@ const UserList = ({username, changeUsername}) => {
     const showUser = (username) => {
         console.log("edit user", username);
         changeUsername(username);
-    }
+    };
 
     return <List>
         <ListItems usernames={usernameList} username={username} showUser={showUser}/>
     </List>
-}
+};
 
 const mapDispatchToProps = dispatch => {
     return {
         changeUsername: username => dispatch(changeUsername(username))
     }
-}
+};
 
 const mapStateToProps = state => {
     return {
         username: state.user.username
     }
-}
+};
 
 export default connect(
     mapStateToProps,

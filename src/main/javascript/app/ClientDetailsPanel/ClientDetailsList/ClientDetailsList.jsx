@@ -10,10 +10,10 @@ const style = makeStyles(theme => ({
        cursor: 'pointer'
    }
 
-}))
+}));
 
 const ListItems = ({ids, cid, showClientDetails}) => {
-    return ids.map(id => <ListItem key={id}
+    return ids != null ? ids.map(id => <ListItem key={id}
                                    button
                                    selected={cid === id}
                                    onClick={() => showClientDetails(id)}
@@ -21,9 +21,8 @@ const ListItems = ({ids, cid, showClientDetails}) => {
             <ListItemText
                 primary={id}
             />
-        </ListItem>)
-
-}
+    </ListItem>) : <ListItem><ListItemText primary={"NO DATA"}/></ListItem>
+};
 
 const ClientDetailsList = ({cid, changeClientId}) => {
     const [cidList, setCIDList] = useState([]);
@@ -36,9 +35,9 @@ const ClientDetailsList = ({cid, changeClientId}) => {
             },
             // body: JSON.stringify({var1: 1, var2: 2})
         }).then( resp => resp.json() )
-            .then(resp => {if(resp.success) setCIDList(resp.data.clientIds);})
+            .then(resp => {if(resp.success) setCIDList(resp.data);})
             .catch(err => console.log(err));
-    }
+    };
 
     useEffect(() => {
         fetchData();
@@ -49,24 +48,24 @@ const ClientDetailsList = ({cid, changeClientId}) => {
     const showClientDetails = (cid) => {
         console.log("edit client details", cid);
         changeClientId(cid);
-    }
+    };
 
     return <List>
         <ListItems ids={cidList} cid={cid} showClientDetails={showClientDetails}/>
     </List>
-}
+};
 
 const mapDispatchToProps = dispatch => {
     return {
         changeClientId: cid => dispatch(changeClientId(cid))
     }
-}
+};
 
 const mapStateToProps = state => {
     return {
         cid: state.clientDetails.clientId
     }
-}
+};
 
 export default connect(
     mapStateToProps,

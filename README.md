@@ -9,7 +9,7 @@ This is for mysql. Please start mysql service first
 - Create new database
 ``` CREATE DATABASE jumkid ```
 
-- Create user
+- Create userEntity
 ``` CREATE USER 'jumkid'@'localhost' IDENTIFIED BY 'password';```
 
 - Grant permission
