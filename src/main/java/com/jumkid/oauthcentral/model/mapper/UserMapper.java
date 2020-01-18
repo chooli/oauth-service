@@ -1,11 +1,11 @@
 package com.jumkid.oauthcentral.model.mapper;
 
-import com.jumkid.oauthcentral.dto.User;
+import com.jumkid.oauthcentral.controller.dto.User;
 import com.jumkid.oauthcentral.model.UserEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel="spring")
-public class UserMapper extends CommonMapper<UserEntity, User> {
+public class UserMapper implements CommonMapper<UserEntity, User> {
 
     @Override
     public User entityToDTO(UserEntity entity) {

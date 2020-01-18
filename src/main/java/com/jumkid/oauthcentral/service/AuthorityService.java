@@ -1,6 +1,6 @@
 package com.jumkid.oauthcentral.service;
 
-import com.jumkid.oauthcentral.dto.Authority;
+import com.jumkid.oauthcentral.controller.dto.Authority;
 import com.jumkid.oauthcentral.exception.DataMutationException;
 import com.jumkid.oauthcentral.exception.DataNotFoundException;
 import com.jumkid.oauthcentral.exception.DuplicateValueException;
@@ -56,14 +56,14 @@ public class AuthorityService {
             if (oldAuthority != null) {
                 AuthorityEntity updatedAuthority = authorityRepository.save(authorityMapper.dtoToEntity(authority));
 
-                normalizeAuthority(authorityId, authority);
+                normalizeDto(authorityId, authority);
 
                 return authorityMapper.entityToDTO(updatedAuthority);
             } else {
                 throw new DataNotFoundException(Authority.ENTITY_NAME, authorityId);
             }
         } catch (Exception e) {
-            log.error("Failed to update authority {}", e);
+            log.error("Failed to update authority {}", e.getMessage());
             throw new DataMutationException(Authority.ENTITY_NAME);
         }
     }
@@ -77,7 +77,7 @@ public class AuthorityService {
         }
     }
 
-    private void normalizeAuthority(Integer authorityId, Authority authority) {
+    private void normalizeDto(Integer authorityId, Authority authority) {
         if (authorityId != null) {
             authority.setId(authorityId);
         }

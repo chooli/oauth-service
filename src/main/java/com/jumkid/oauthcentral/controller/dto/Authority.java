@@ -1,4 +1,4 @@
-package com.jumkid.oauthcentral.dto;
+package com.jumkid.oauthcentral.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

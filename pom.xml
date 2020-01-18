@@ -158,7 +158,7 @@
                 <configuration>
                     <url>jdbc:mysql://localhost:3306/oauth_central</url>
 <!--                    <url>jdbc:h2:file:./target/foobar</url>-->
-                    <userEntity>jumkid</userEntity>
+                    <user>jumkid</user>
                     <password>bigdata</password>
                     <encoding>UTF-8</encoding>
                     <cleanDisabled>false</cleanDisabled>

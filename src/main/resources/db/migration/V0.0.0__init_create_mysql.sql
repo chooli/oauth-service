@@ -19,16 +19,16 @@ CREATE INDEX unique_key_username ON authorities(username(50));
 DROP TABLE IF EXISTS oauth_client_details;
 CREATE TABLE oauth_client_details (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    client_id VARCHAR(256),
-    resource_ids VARCHAR(256),
-    client_secret VARCHAR(256),
-    scope VARCHAR(256),
-    authorized_grant_types VARCHAR(256),
-    web_server_redirect_uri VARCHAR(256),
-    authorities VARCHAR(256),
+    client_id VARCHAR(255),
+    resource_ids VARCHAR(255),
+    client_secret VARCHAR(255),
+    scope VARCHAR(255),
+    authorized_grant_types VARCHAR(255),
+    web_server_redirect_uri VARCHAR(255),
+    authorities VARCHAR(255),
     access_token_validity INTEGER,
     refresh_token_validity INTEGER,
-    additional_information VARCHAR(4096),
-    autoapprove VARCHAR(256)
+    additional_information VARCHAR(5000),
+    auto_approve VARCHAR(255)
 );
-CREATE UNIQUE INDEX unique_key_client_id ON oauth_client_details(client_id(256));
+CREATE UNIQUE INDEX unique_key_client_id ON oauth_client_details(client_id(255));

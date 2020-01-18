@@ -1,6 +1,6 @@
 package com.jumkid.oauthcentral.service;
 
-import com.jumkid.oauthcentral.dto.User;
+import com.jumkid.oauthcentral.controller.dto.User;
 import com.jumkid.oauthcentral.exception.DataMutationException;
 import com.jumkid.oauthcentral.exception.DataNotFoundException;
 import com.jumkid.oauthcentral.exception.DuplicateValueException;
@@ -47,7 +47,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<String> getSingleFieldOfAllUsers(UserField userField) {
+    public List<String> getSingleFieldOfAll(UserField userField) {
         return userRepository.getSingleFieldOfAllUsers(userField.columnName());
     }
 
@@ -55,7 +55,7 @@ public class UserService {
         UserEntity existUser = fetchUserEntity(user.getUsername()).orElse(null);
         try {
             if (existUser == null) {
-                normalizeUser(null, user, null);
+                normalizeDto(null, user, null);
 
                 UserEntity newUser = userMapper.dtoToEntity(user);
 
@@ -64,7 +64,7 @@ public class UserService {
                 throw new DuplicateValueException(String.format("username %s exists, please use different username", user.getUsername()));
             }
         } catch (Exception e) {
-            log.error("Failed to save user {}", e);
+            log.error("Failed to save user {}", e.getMessage());
             throw new DataMutationException(User.ENTITY_NAME);
         }
     }
@@ -74,7 +74,7 @@ public class UserService {
             Optional<UserEntity> oldUser = fetchUserEntity(username);
 
             if (oldUser.isPresent()) {
-                normalizeUser(username, user, oldUser.get());
+                normalizeDto(username, user, oldUser.get());
 
                 UserEntity updateUser = userRepository.save(userMapper.dtoToEntity(user));
 
@@ -83,7 +83,7 @@ public class UserService {
                 throw new DataNotFoundException(User.ENTITY_NAME, username);
             }
         } catch (Exception e) {
-            log.error("Failed to update user {}", e);
+            log.error("Failed to update user {}", e.getMessage());
             throw new DataMutationException(User.ENTITY_NAME);
         }
     }
@@ -99,12 +99,12 @@ public class UserService {
                 throw new DataNotFoundException(User.ENTITY_NAME, username);
             }
         } catch (Exception e) {
-            log.error("Failed to mutate user {}", e);
+            log.error("Failed to mutate user {}", e.getMessage());
         }
         return 0;
     }
 
-    private void normalizeUser(String username, User user, UserEntity oldUser) {
+    private void normalizeDto(String username, User user, UserEntity oldUser) {
         if (username != null && !username.isBlank()) {
             user.setUsername(username);
         }

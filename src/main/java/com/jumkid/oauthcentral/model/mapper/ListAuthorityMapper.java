@@ -1,6 +1,6 @@
 package com.jumkid.oauthcentral.model.mapper;
 
-import com.jumkid.oauthcentral.dto.Authority;
+import com.jumkid.oauthcentral.controller.dto.Authority;
 import com.jumkid.oauthcentral.model.AuthorityEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
